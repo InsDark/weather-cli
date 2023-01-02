@@ -7,15 +7,19 @@ export const renderInterface = async () => {
         choices: [
             {
                 value: '1',
-                name: 'Search time by city'
+                name: `${'1.'.green} Search time by city`
             }, 
             {
                 value: '2',
-                name: 'History'
+                name: `${'2.'.green} History`
+            },
+            {
+                value: '3',
+                name: `${'3.'.green} Clear History`
             },
             {
                 value: '0',
-                name: 'End'
+                name: `${'0.'.green} End`
             }
         ]
     }
@@ -32,19 +36,35 @@ export const getCityName =  async () => {
     return name
 } 
 
-export const getCity = async (cities) => {
+export const getCity = async (cities, history = false) => {
     const citiesList = [];
     let i = 0;
-    cities.forEach(city => {
-        i++;
-
-        const {properties: {formatted : name, lon, lat}} = city
-        const cityObject = {
-            value : `${lon}&${lat}`,
-            name: `${i.toString().green}. ${name}`
+    if(cities.length == 0) {
+        return null
+    } else {
+        if(history) {
+            cities.forEach(city => {
+                i++;
+                const {name, coor} = city
+                const cityObject = {
+                    value: coor,
+                    name: `${i.toString().green}. ${name}`
+                }
+                citiesList.push(cityObject)
+            })
+        } else {
+            cities.forEach(city => {
+                i++;
+        
+                const {properties: {formatted : name, lon, lat}} = city
+                const cityObject = {
+                    value : `${lon}&${lat}&${name}`,
+                    name: `${i.toString().green}. ${name}`
+                }
+                citiesList.push(cityObject)
+            })
         }
-        citiesList.push(cityObject)
-    })
+    }
     const question = {
         type: 'list',
         name: 'city',
